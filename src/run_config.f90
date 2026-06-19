@@ -69,10 +69,10 @@
 !real(dp) :: eat(30,2),fat(30,2),rpk(30),eatp(30),fatp(30,2)
  real(dp) :: eat(30,3),fat(30,3),rpk(30),eatp(30),fatp(30,3)
 
- real(dp),allocatable :: rho(:),rhoc(:),rhocps(:),vi(:),vfull(:)
+ real(dp),allocatable :: rho(:),rhoc(:),rhocps(:),vi(:),vfull(:),tau(:),tauc(:)
  real(dp),allocatable :: uu(:),up(:)
 
- allocate(rho(mmax),rhoc(mmax),vi(mmax),vfull(mmax),rhocps(mmax))
+ allocate(rho(mmax),rhoc(mmax),vi(mmax),vfull(mmax),rhocps(mmax),tau(mmax),tauc(mmax))
  allocate(uu(mmax),up(mmax))
 
 ! atom tests comparing reference state and excited configuration for
@@ -160,7 +160,7 @@
 !all-electron atom solution for maximally-ionized state
 
  call sratom(nat,lat,eat(1,2),fat(1,2),rpk,nc,nc+nvt,it,rhoc,rho, &
-&            rr,vfull,zz,mmax,iexc,eaetst,ierr,srel)
+&            rr,vfull,tauc,tau,zz,mmax,iexc,eaetst,ierr,srel)
  if(ierr/=0) then
   write(6,'(a/a,i2)') 'run_config: WARNING  for AE atom,', &
 &       ' WARNING no output for configuration',jj
@@ -169,7 +169,7 @@
   else
     write(6,'(a)') 'run_config: WARNING self-consistency failed to converge'
   end if
-  deallocate(rho,rhoc,rhocps,vi,vfull)
+  deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
   deallocate(uu,up)
   return
  end if
@@ -185,7 +185,7 @@
        write(6,'(/a,3i4)') & 
 &            'runconfig: WARNING lschfb convergence ERROR n,l,iter=', &
 &            nat(kk),lat(kk),it
-       deallocate(rho,rhoc,rhocps,vi,vfull)
+       deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
        deallocate(uu,up)
        return
      end if
@@ -199,7 +199,7 @@
 !all-electron atom solution for excited state
 
  call sratom(nat,lat,eat(1,3),fat(1,3),rpk,nc,nc+nvt,it,rhoc,rho, &
-&            rr,vfull,zz,mmax,iexc,eaetst,ierr,srel)
+&            rr,vfull,tauc,tau,zz,mmax,iexc,eaetst,ierr,srel)
  if(ierr/=0) then
   write(6,'(a/a,i2)') 'run_config: WARNING  for AE atom,', &
 &       ' WARNING no output for configuration',jj
@@ -208,7 +208,7 @@
   else
     write(6,'(a)') 'run_config: WARNING self-consistency failed to converge'
   end if
-  deallocate(rho,rhoc,rhocps,vi,vfull)
+  deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
   deallocate(uu,up)
   return
  end if
@@ -241,7 +241,7 @@
   write(6,'(a,a/a,i2)') 'run_config: WARNING for fully non-local PS atom,', &
 &       ' stg. 1', &
 &       ' WARNING no output for configuration',jj
-  deallocate(rho,rhoc,rhocps,vi,vfull)
+  deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
   return
  end if
 
@@ -263,7 +263,7 @@
   write(6,'(a,a/a,i2)') 'run_config: WARNING for fully non-local PS atom,', &
 &       ' stg. 2', &
 &       ' WARNING no output for configuration',jj
-  deallocate(rho,rhoc,rhocps,vi,vfull)
+  deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
   return
  end if
 
@@ -287,7 +287,7 @@
  write(6,'(a,1p,d10.2)') '      PSP excitation error=', &
 & eaetst-etot-etsttot+epstot
 
- deallocate(rho,rhoc,rhocps,vi,vfull)
+ deallocate(rho,rhoc,rhocps,vi,vfull,tau,tauc)
   deallocate(uu,up)
  return
  end subroutine run_config

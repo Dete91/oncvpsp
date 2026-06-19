@@ -70,7 +70,7 @@
 
  real(dp), allocatable :: evkb(:,:),cvgplt(:,:,:,:),qq(:,:)
  real(dp), allocatable :: rr(:)
- real(dp), allocatable :: rho(:),rhoc(:),rhot(:)
+ real(dp), allocatable :: rho(:),rhoc(:),rhot(:),tau(:),tauc(:)
  real(dp), allocatable :: uu(:),up(:)
  real(dp), allocatable :: vp(:,:),vfull(:),vkb(:,:,:),pswf(:,:,:)
  real(dp), allocatable :: vwell(:)
@@ -231,7 +231,7 @@
 
 
  allocate(rr(mmax))
- allocate(rho(mmax),rhoc(mmax),rhot(mmax))
+ allocate(rho(mmax),rhoc(mmax),rhot(mmax),tau(mmax),tauc(mmax))
  allocate(uu(mmax),up(mmax),uupsa(mmax,30))
  allocate(evkb(mxprj,4), cvgplt(2,7,mxprj,4),qq(mxprj,mxprj))
  allocate(vp(mmax,5),vfull(mmax),vkb(mmax,mxprj,4),pswf(mmax,mxprj,4))
@@ -257,7 +257,7 @@
 ! full potential atom solution
 !
    call sratom(na,la,ea,fa,rpk,nc,nc+nv,it,rhoc,rho, &
-&              rr,vfull,zz,mmax,iexc,etot,ierr,srel)
+&              rr,vfull,tauc,tau,zz,mmax,iexc,etot,ierr,srel)
 !
 !
 
