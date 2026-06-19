@@ -13,6 +13,7 @@ set(src_oncvpsp
     exchdl.f90
     excpzca.f90
     excwig.f90
+    fcrossover.f90
     gg1cc.f90
     gp1cc.f90
     gpp1cc.f90
@@ -36,6 +37,7 @@ set(src_oncvpsp
     optimize.f90
     pspot.f90
     qroots.f90
+    rtloc.f90
     run_ghosts.f90
     run_optimize.f90
     sbf_basis_con.f90
