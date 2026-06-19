@@ -1,0 +1,29 @@
+# Fortran linting config for ONCVPSP (https://fortitude.readthedocs.io)
+# Run:  fortitude check          (lint all Fortran)
+#       fortitude check src/foo.f90   (lint one file)
+#       fortitude check --fix     (auto-fix the safe findings)
+#
+# This is a deliberately lenient starting point for a legacy codebase.
+# Tighten `select`/loosen `ignore` over time as the source is cleaned up.
+
+[check]
+# Free-form lines in this code run long; allow Fortran's traditional limit.
+line-length = 132
+
+# Don't lint the bundled third-party XML writer.
+exclude = ["src/xmlf90-wxml"]
+
+# Start from the correctness/portability categories rather than every style
+# rule, so the signal isn't drowned out by thousands of pre-existing nits.
+#   C = correctness/bugprone, PORT = portability, OB = obsolescent features
+select = ["C", "PORT", "OB"]
+
+# Pervasive in this legacy code and noisy to fix all at once; re-enable as the
+# source gets modernized. These are style/convention, not bugs:
+#   C121    = 'use' statement missing 'only' clause
+#   C061    = missing 'intent' on dummy arguments
+#   C031    = magic number in array size
+#   C032    = literal integer as an I/O unit
+#   PORT001 = non-portable literal I/O unit
+#   OB031   = deprecated specific intrinsic names (e.g. dsqrt)
+ignore = ["C121", "C061", "C031", "C032", "PORT001", "OB031"]

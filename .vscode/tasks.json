@@ -1,0 +1,42 @@
+{
+  // Runs fortitude and routes its findings into the VS Code Problems panel,
+  // alongside the Modern Fortran extension's compiler diagnostics.
+  // Run with: Terminal > Run Task... > "fortitude: check"  (or Ctrl+Shift+B).
+  // Config is read from fortitude.toml in the workspace root.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "fortitude: check",
+      "type": "shell",
+      // Absolute path: fortitude lives in ~/.local/bin, which may not be on PATH.
+      "command": "${userHome}/.local/bin/fortitude",
+      "args": ["check", "--output-format", "concise"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": {
+        "owner": "fortitude",
+        "source": "fortitude",
+        "severity": "warning",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):(\\d+):\\s+(\\w+)\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "code": 4,
+          "message": 5
+        }
+      },
+      "presentation": { "reveal": "silent", "panel": "shared", "clear": true },
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "fortitude: fix (safe)",
+      "type": "shell",
+      "command": "${userHome}/.local/bin/fortitude",
+      "args": ["check", "--fix"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    }
+  ]
+}

@@ -17,7 +17,7 @@
 ! along with this program.  If not, see <http://www.gnu.org/licenses/>.
 !
  subroutine sratom(na,la,ea,fa,rpk,nc,ncv,it,rhoc,rho, &
-&           rr,vi,zz,mmax,iexc,etot,ierr,srel)
+&           rr,vi,tauc,tau,zz,mmax,iexc,etot,ierr,srel)
 
 ! self-consistent scalar-relativistic all-electron atom
 ! calculation using log mesh (non-relativistic when srel=.false.)
@@ -55,6 +55,7 @@
  real(dp) :: etot
  real(dp) :: ea(ncv),rpk(ncv)
  real(dp) :: rho(mmax),rhoc(mmax),vi(mmax)
+ real(dp) :: tau(mmax),tauc(mmax)
 
 !Local function
  real(dp) :: tfapot
@@ -63,7 +64,7 @@
  integer :: nin,mch
  real(dp) :: amesh,al
  real(dp) :: dr,eeel,eexc,et,rl,rl1,sd,sf,sn,eeig
- real(dp) :: thl,vn,zion
+ real(dp) :: thl,vn,zion,sls
  integer :: ii,jj
  logical :: convg
 
@@ -79,7 +80,7 @@
 ! why all this is necessary is unclear, but it seems to be
  u(:)=0.d0; up(:)=0.d0; vo(:)=0.d0; vi1(:)=0.d0; vo1(:)=0.d0; vxc(:)=0.d0
  dr=0.d0; eeel=0.d0; eexc=0.d0; et=0.d0; rl=0.d0; rl1=0.d0
- sd=0.d0; sf=0.d0; sn=0.d0; eeig=0.d0; thl=0.d0; vn=0.d0; zion=0.d0 
+ sd=0.d0; sf=0.d0; sn=0.d0; eeig=0.d0; thl=0.d0; vn=0.d0; zion=0.d0; sls=0.d0
  nin=0; mch=0
 
  al = 0.01d0 * dlog(rr(101) / rr(1))
@@ -105,6 +106,8 @@
 
    rhoc(:) = 0.0d0
    rho(:)=0.0d0
+   tauc(:)=0.0d0
+   tau(:)=0.0d0
 
 ! solve for bound states in turn
    eeig=0.0d0
@@ -129,11 +132,16 @@
      if(ea(ii)/= et) convg=.false.
      ea(ii)=et
 
-! accumulate charge and eigenvalues
+! accumulate charge, kinetic energy density, and eigenvalues
      eeig = eeig + fa(ii) * ea(ii)
+     sls=la(ii)*(la(ii)+1)
      rho(:)=rho(:) + fa(ii)*(u(:)/rr(:))**2
+     tau(:)=tau(:) + 0.5d0*fa(ii)*(((up(:)/al - u(:))/rr(:)**2)**2 &
+&        + (sls/rr(:)**2)*(u(:)/rr(:))**2)
      if(ii<=nc) then
        rhoc(:)=rhoc(:) + fa(ii)*(u(:)/rr(:))**2
+       tauc(:)=tauc(:) + 0.5d0*fa(ii)*(((up(:)/al - u(:))/rr(:)**2)**2 &
+&          + (sls/rr(:)**2)*(u(:)/rr(:))**2)
      end if
 
 
