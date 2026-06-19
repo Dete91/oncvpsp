@@ -34,6 +34,7 @@ set(src_oncvpsp
     modcore.f90
     modcore2.f90
     modcore3.f90
+    modcore5.f90
     optimize.f90
     pspot.f90
     qroots.f90

@@ -45,6 +45,7 @@
  integer :: ii,ierr,iexc,iexct,ios,iprint,irps,it,icmod,lpopt
  integer :: jj,kk,ll,l1,lloc,lmax,lt,inline
  integer :: mch,mchf,mmax,n1,n2,nc,nlim,nlloc,nlmax,irpsh,nrl
+ integer :: ircmin,ircmax
  integer :: nv,irct,ncnf,nvt
  integer :: iprj,mxprj
  integer,allocatable :: npa(:,:)
@@ -78,7 +79,7 @@
 
  real(dp), allocatable :: evkb(:,:),cvgplt(:,:,:,:),qq(:,:)
  real(dp), allocatable :: rr(:)
- real(dp), allocatable :: rho(:),rhoc(:),rhot(:),tau(:),tauc(:),taups(:)
+ real(dp), allocatable :: rho(:),rhoc(:),rhot(:),tau(:),tauc(:),taups(:),taumod(:)
  real(dp), allocatable :: uu(:),up(:)
  real(dp), allocatable :: vp(:,:),vfull(:),vkb(:,:,:),pswf(:,:,:)
  real(dp), allocatable :: vwell(:)
@@ -255,7 +256,7 @@
 
 
  allocate(rr(mmax))
- allocate(rho(mmax),rhoc(mmax),rhot(mmax),tau(mmax),tauc(mmax),taups(mmax))
+ allocate(rho(mmax),rhoc(mmax),rhot(mmax),tau(mmax),tauc(mmax),taups(mmax),taumod(mmax))
  allocate(uu(mmax),up(mmax),uupsa(mmax,30))
  allocate(evkb(mxprj,4), cvgplt(2,7,mxprj,4),qq(mxprj,mxprj))
  allocate(vp(mmax,5),vfull(mmax),vkb(mmax,mxprj,4),pswf(mmax,mxprj,4))
@@ -549,6 +550,16 @@
  allocate(rhomod(mmax,5))
 
  rhomod(:,:)=0.0d0
+ taumod(:)=0.0d0
+
+! minimum and maximum core radii (over valence l channels) for the
+! icmod=5 model core charge / kinetic energy density
+ ircmin=mmax
+ ircmax=0
+ do l1=1,lmax+1
+   if(irc(l1)<ircmin) ircmin=irc(l1)
+   if(irc(l1)>ircmax) ircmax=irc(l1)
+ end do
 
 ! construct model core charge based on monotonic polynomial fit
 ! or Teter function fit
@@ -561,9 +572,14 @@
    call modcore2(icmod,rhops,rho,rhoc,rhoae,rhotae,rhomod, &
 &               fcfact,rcfact,irps,mmax,rr,nc,nv,la,zion,iexc)
 
- else if(icmod>=3) then
+ else if(icmod==3 .or. icmod==4) then
    call modcore3(icmod,rhops,rho,rhoc,rhoae,rhotae,rhomod, &
 &               fcfact,rcfact,irps,mmax,rr,nc,nv,la,zion,iexc)
+
+ else if(icmod==5) then
+   call modcore5(rho,rhoc,rhotae,tau,tauc,taups, &
+&               rhomod,taumod,fcfact,rcfact,ircmin,ircmax, &
+&               mmax,rr,icmod)
 
  end if
 
