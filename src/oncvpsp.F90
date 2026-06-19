@@ -78,7 +78,7 @@
 
  real(dp), allocatable :: evkb(:,:),cvgplt(:,:,:,:),qq(:,:)
  real(dp), allocatable :: rr(:)
- real(dp), allocatable :: rho(:),rhoc(:),rhot(:),tau(:),tauc(:)
+ real(dp), allocatable :: rho(:),rhoc(:),rhot(:),tau(:),tauc(:),taups(:)
  real(dp), allocatable :: uu(:),up(:)
  real(dp), allocatable :: vp(:,:),vfull(:),vkb(:,:,:),pswf(:,:,:)
  real(dp), allocatable :: vwell(:)
@@ -255,7 +255,7 @@
 
 
  allocate(rr(mmax))
- allocate(rho(mmax),rhoc(mmax),rhot(mmax),tau(mmax),tauc(mmax))
+ allocate(rho(mmax),rhoc(mmax),rhot(mmax),tau(mmax),tauc(mmax),taups(mmax))
  allocate(uu(mmax),up(mmax),uupsa(mmax,30))
  allocate(evkb(mxprj,4), cvgplt(2,7,mxprj,4),qq(mxprj,mxprj))
  allocate(vp(mmax,5),vfull(mmax),vkb(mmax,mxprj,4),pswf(mmax,mxprj,4))
@@ -495,6 +495,7 @@
  rho(:)=0.0d0
  nodes(:)=0
  rhotae(:)=0.0d0
+ taups(:)=0.0d0
  irps=0
  do kk=1,nv
 
@@ -531,6 +532,13 @@
 
    rhops(:,kk)=(uu(:)/rr(:))**2
    rho(:)=rho(:)+fa(nc+kk)*rhops(:,kk)
+
+! accumulate pseudo-valence kinetic energy density (same KED form as sratom),
+! using the pseudo wavefunction uu and its derivative up from lschvkbb
+   sls=ll*(ll+1)
+   taups(:)=taups(:) + 0.5d0*fa(nc+kk)*(((up(:)/al - uu(:))/rr(:)**2)**2 &
+&          + (sls/rr(:)**2)*(uu(:)/rr(:))**2)
+
    eeig=eeig+fa(nc+kk)*et
 
    zval=zval+fa(nc+kk)
