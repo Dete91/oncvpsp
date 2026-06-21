@@ -293,10 +293,10 @@ module input_toml_m
       call get_value(child, "fcfact", fcfact)
       if (icmod >= 0 .and. icmod <= 2) then
          rcfact = 0.0_dp
-      else if (icmod >= 3 .and. icmod <= 4) then
+      else if (icmod >= 3 .and. icmod <= 5) then
          call get_value(child, "rcfact", rcfact)
       else
-         write (stderr, '(A)') 'Error: Invalid icmod in [model_core_charge] section. Must be 0, 1, 2, 3, or 4.'
+         write (stderr, '(A)') 'Error: Invalid icmod in [model_core_charge] section. Must be 0, 1, 2, 3, 4, or 5.'
          stop 1
       end if
 
@@ -678,10 +678,10 @@ module input_toml_m
       call get_value(child, "fcfact", fcfact)
       if (icmod >= 0 .and. icmod <= 2) then
          rcfact = 0.0_dp
-      else if (icmod >= 3 .and. icmod <= 4) then
+      else if (icmod >= 3 .and. icmod <= 5) then
          call get_value(child, "rcfact", rcfact)
       else
-         write (stderr, '(A)') 'Error: Invalid icmod in [model_core_charge] section. Must be 0, 1, 2, 3, or 4.'
+         write (stderr, '(A)') 'Error: Invalid icmod in [model_core_charge] section. Must be 0, 1, 2, 3, 4, or 5.'
          stop 1
       end if
 
