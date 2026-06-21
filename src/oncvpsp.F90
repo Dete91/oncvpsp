@@ -658,6 +658,7 @@
 
  if(trim(psfile)=='upf' .or. trim(psfile)=='both') then
   call upfout(lmax,lloc,rc,vkb,evkb,nproj,rr,vpuns,rho,rhomod, &
+&             taups,taumod, &
 &             zz,zion,mmax,mxprj,iexc,icmod,nrl,drl,atsym,epstot, &
 &             na,la,ncon,nbas,nvcnf,nacnf,lacnf,nc,nv,lpopt,ncnf, &
 &             fa,rc0,ep,qcut,debl,facnf,dvloc0,fcfact,rcfact, &

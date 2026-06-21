@@ -20,6 +20,7 @@
 ! for PWSCF input using the UPF file format
 
  subroutine upfout(lmax,lloc,rc,vkb,evkb,nproj,rr,vpuns,rho,rhomod, &
+&                  taups,taumod, &
 &                  zz,zion,mmax,mxprj,iexc,icmod,nrl,drl,atsym,epstot, &
 &                  na,la,ncon,nbas,nvcnf,nacnf,lacnf,nc,nv,lpopt,ncnf, &
 &                  fa,rc0,ep,qcut,debl,facnf,dvloc0,fcfact,rcfact, &
@@ -37,6 +38,8 @@
 !  if linear combination is used)
 !rho  valence pseudocharge
 !rhomod  model core charge
+!taups  valence pseudo-kinetic energy density (meta-GGA, icmod=5)
+!taumod  model core kinetic energy density (meta-GGA, icmod=5)
 !zz  atomic number
 !zion  at this point, total valence charge (becomes psuedoion charge)
 !mmax  size of log radial grid
@@ -66,6 +69,7 @@
  real(dp) :: drl,fcfact,rcfact,zz,zion,epstot
  real(dp) :: rr(mmax),vpuns(mmax,5),rho(mmax),vkb(mmax,mxprj,4)
  real(dp) :: rhomod(mmax,5)
+ real(dp) :: taups(mmax),taumod(mmax)
  real(dp):: rc(6),evkb(mxprj,4)
  character*2 :: atsym
  real(dp) :: uupsa(mmax,nv)
@@ -86,6 +90,7 @@
  integer :: dtime(8)
  real(dp) :: al,nrmsum,uurcut
  real(dp), allocatable :: rhomodl(:,:),dmat(:,:)
+ real(dp), allocatable :: taupsl(:),taumodl(:)
  real(dp),allocatable :: rhol(:),rl(:),vkbl(:,:,:),vpl(:,:),uual(:,:)
  character*5 :: lnames
  character*2 :: pspd(3)
@@ -112,6 +117,7 @@
  end if
 
  allocate(rhol(nrl),rl(nrl),vkbl(nrl,mxprj,4),vpl(nrl,5),rhomodl(nrl,5),uual(nrl,nv))
+ allocate(taupsl(nrl),taumodl(nrl))
 
 ! interpolation of everything onto linear output mesh
 
@@ -135,6 +141,9 @@
  do jj=1,5
    call dpnint(rr,rhomod(1,jj),mmax,rl,rhomodl(1,jj),nrl)
  end do
+
+ call dpnint(rr,taups,mmax,rl,taupsl,nrl)
+ call dpnint(rr,taumod,mmax,rl,taumodl,nrl)
 
  do ii=1,nv
    call dpnint(rr,uupsa(1,ii),mmax,rl,uual(1,ii),nrl)
@@ -278,6 +287,12 @@
    else
      write(6,'(t8,a)') &
 &        'core_correction="F"'
+   end if
+
+! Signal that the file carries valence tau and model core tau for meta-GGA
+   if(icmod==5) then
+     write(6,'(t8,a)') &
+&        'with_metagga_info="T"'
    end if
 
    if(iexc==2 .or. iexc==-000004) then
@@ -530,11 +545,32 @@
  write(6,'(t2,a)') &
 &      '</PP_RHOATOM>'
 
+! meta-GGA: model core kinetic energy density and valence pseudo-kinetic
+! energy density (parallel PP_NLCC and PP_RHOATOM respectively)
+ if(icmod==5) then
+   write(6,'(t2,a,i4,a)') &
+&        '<PP_TAUMOD type="real"  size="',nrl,'" columns="4">'
+
+   write(6,'(1p,4e20.10)') (taumodl(ii)/(4.0d0*pi),ii=1,nrl)
+
+   write(6,'(t2,a)') &
+&        '</PP_TAUMOD>'
+
+   write(6,'(t2,a,i4,a)') &
+&        '<PP_TAUATOM type="real"  size="',nrl,'" columns="4">'
+
+   write(6,'(1p,4e20.10)') (taupsl(ii)/(4.0d0*pi),ii=1,nrl)
+
+   write(6,'(t2,a)') &
+&        '</PP_TAUATOM>'
+ end if
+
  write(6,'(a)') &
 &      '</UPF>'
 
 
  deallocate(rhol,rl,vkbl,vpl,rhomodl,dmat)
+ deallocate(taupsl,taumodl)
 
 ! write termination flag
  write(6,'(/a)') 'END_PSP'
