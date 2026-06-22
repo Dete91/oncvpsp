@@ -3,8 +3,10 @@
 #which review the results
 #uses the scalar-relativistic all-electron atom calculation
 
-PREFIX=/Users/mverstra/CODES/ONCVPSP/GITHUB_VERSION/oncvpsp
-BIN_DIR=/Users/mverstra/CODES/ONCVPSP/GITHUB_VERSION/oncvpsp/src
+# repo root (this script lives in scripts/) and the CMake executable dir;
+# override with  BIN_DIR=/path  if your build is elsewhere
+PREFIX=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+BIN_DIR=${BIN_DIR:-$PREFIX/build/bin}
 
 INFILE=$1.dat
 

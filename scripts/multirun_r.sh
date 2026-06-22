@@ -7,7 +7,8 @@
 
 NPROC=4
 
-PREFIX=/home/drh/oncvpsp-4.0.0
+# repo root (this script lives in scripts/); executables are in build/bin
+PREFIX=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 nn=0
 
@@ -18,7 +19,7 @@ for ii do
 
 	OUTFILE=`echo $ii | sed -e s/.dat// `_r.out
 
-	$PREFIX/src/oncvpspr.x <$ii >$OUTFILE &
+	$PREFIX/build/bin/oncvpspr.x <$ii >$OUTFILE &
 
 
        if [ $(($nn%$NPROC)) == 0 ]

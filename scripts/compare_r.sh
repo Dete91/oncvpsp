@@ -8,7 +8,8 @@
 #functions can be compared (libxc produces two extra lines which 
 #stops fldiff)
 
-PREFIX=/Users/mverstra/CODES/ONCVPSP/GITHUB_VERSION/oncvpsp
+# repo root (this script lives in scripts/); holds tests/ and scripts/fldiff.pl
+PREFIX=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 #HEAD=`echo $1 | sed s/.dat//`
 HEAD=`echo $1 | sed s/.dat/_r/`
