@@ -187,6 +187,11 @@ contains
       if (ios == 0 .and. icmod == 5) then
          read (line, *, iostat=ios) icmod, fcfact, rcfact
       end if
+      ! icmod==6 : icmod, fcfact, rcfact  (icmod=3 model core charge + icmod=5 core KED;
+      !            fcfact/rcfact drive the core charge only, the KED uses fixed values)
+      if (ios == 0 .and. icmod == 6) then
+         read (line, *, iostat=ios) icmod, fcfact, rcfact
+      end if
       ! icmod==4[explicit grid]: icmod, fcfact(ignored), rcfact(ignored),
       !   fcfact_min, fcfact_max, fcfact_step,
       !   rcfact_min, rcfact_max, rcfact_step
@@ -413,6 +418,11 @@ contains
       end if
       ! icmod==5 : icmod, fcfact, rcfact  (model core charge + core KED)
       if (ios == 0 .and. icmod == 5) then
+         read (line, *, iostat=ios) icmod, fcfact, rcfact
+      end if
+      ! icmod==6 : icmod, fcfact, rcfact  (icmod=3 model core charge + icmod=5 core KED;
+      !            fcfact/rcfact drive the core charge only, the KED uses fixed values)
+      if (ios == 0 .and. icmod == 6) then
          read (line, *, iostat=ios) icmod, fcfact, rcfact
       end if
       ! icmod==4[explicit grid]: icmod, fcfact(ignored), rcfact(ignored),

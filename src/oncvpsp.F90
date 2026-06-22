@@ -579,7 +579,20 @@
  else if(icmod==5) then
    call modcore5(rho,rhoc,rhotae,tau,tauc,taups, &
 &               rhomod,taumod,fcfact,rcfact,ircmin,ircmax, &
-&               mmax,rr,icmod)
+&               mmax,rr,icmod,.true.)
+
+ else if(icmod==6) then
+!  model core electron density: Teter specified-parameter fit (icmod=3 path),
+!  driven by the input fcfact/rcfact
+   call modcore3(3,rhops,rho,rhoc,rhoae,rhotae,rhomod, &
+&               fcfact,rcfact,irps,mmax,rr,nc,nv,la,zion,iexc)
+!  model core kinetic energy density: icmod=5 machinery with fixed
+!  fcfact=3.0, rcfact=0.5; rho block skipped (lrhomod=.false.) so the
+!  modcore3 rhomod above is preserved.  Pass 5 as the rtloc polynomial
+!  selector since icmod=6 is not an rtloc option.
+   call modcore5(rho,rhoc,rhotae,tau,tauc,taups, &
+&               rhomod,taumod,3.0d0,0.5d0,ircmin,ircmax, &
+&               mmax,rr,5,.false.)
 
  end if
 

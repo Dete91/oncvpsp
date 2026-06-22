@@ -27,7 +27,7 @@
 
  subroutine modcore5(rhtps,rhoc,rhotae,tau,tauc,taups, &
 &                    rhomod,taumod,fcfact,rcfact,ircmin,ircmax, &
-&                    mmax,rr,icmod)
+&                    mmax,rr,icmod,lrhomod)
 
 !rhtps  total pseudo-valence charge density
 !rhoc  all-electron core charge density
@@ -43,13 +43,19 @@
 !ircmax  rr index of maximum core radius
 !mmax  dimension of log grid
 !rr  log radial grid
-!icmod  model-charge mode (==5); passed to rtloc as its polynomial selector
+!icmod  rtloc polynomial selector (5 for the icmod=5 continuation)
+!lrhomod  .true.  -> build the model core charge (rhomod) and the model core
+!                   KED (taumod); standard icmod=5 behavior.
+!         .false. -> build only the model core KED (taumod); the rhomod block
+!                   is skipped so a previously built rhomod is left untouched
+!                   (used by the icmod=6 icmod3-density + icmod5-KED combination)
 
  implicit none
  integer, parameter :: dp=kind(1.0d0)
 
 !Input variables
  integer :: mmax,ircmin,ircmax,icmod
+ logical :: lrhomod
  real(dp) :: fcfact,rcfact
  real(dp) :: rr(mmax)
  real(dp) :: rhtps(mmax),rhoc(mmax),rhotae(mmax)
@@ -68,7 +74,11 @@
 
  allocate(rhodiff(mmax),taudiff(mmax),rholoc(mmax),tauloc(mmax))
 
- write(6,'(/a)') 'Model core charge and kinetic energy density (icmod=5)'
+ if(lrhomod) then
+   write(6,'(/a)') 'Model core charge and kinetic energy density (icmod=5)'
+ else
+   write(6,'(/a)') 'Model core kinetic energy density (icmod=6 combination)'
+ end if
 
 ! pseudo-valence maxima set the origin amplitudes
  rhopsmax=0.0d0
@@ -94,6 +104,10 @@
 ! ---- model core charge ----
 !interval-halving search for the continuation radius so that
 !rholoc(1)=fcfact*rhopsmax
+!Skipped when lrhomod is .false. (icmod=6): the model core charge is then
+!supplied separately by modcore3 and rhomod must not be overwritten here.
+
+ if(lrhomod) then
 
  irxmax=0
  do ii=ircmin,1,-1
@@ -128,6 +142,8 @@
 
  rhomod(:,:)=0.0d0
  rhomod(:,1)=rholoc(:)
+
+ end if !lrhomod
 
 ! ---- model core kinetic energy density ----
 !interval-halving search for the continuation radius so that

@@ -290,7 +290,7 @@
    end if
 
 ! Signal that the file carries valence tau and model core tau for meta-GGA
-   if(icmod==5) then
+   if(icmod==5 .or. icmod==6) then
      write(6,'(t8,a)') &
 &        'with_metagga_info="T"'
    end if
@@ -547,7 +547,7 @@
 
 ! meta-GGA: model core kinetic energy density and valence pseudo-kinetic
 ! energy density (parallel PP_NLCC and PP_RHOATOM respectively)
- if(icmod==5) then
+ if(icmod==5 .or. icmod==6) then
    write(6,'(t2,a,i4,a)') &
 &        '<PP_TAUMOD type="real"  size="',nrl,'" columns="4">'
 

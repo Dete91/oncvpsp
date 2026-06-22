@@ -181,18 +181,18 @@
   end if
  end do
 
- if(icmod<0 .or. icmod>5) then
-  write(6,'(a)') 'test_data: must have 0<= icmod <=5'
+ if(icmod<0 .or. icmod>6) then
+  write(6,'(a)') 'test_data: must have 0<= icmod <=6'
   ierr=ierr+1
  end if
 
- if((icmod==1 .or. icmod==3 .or. icmod==5) .and. fcfact<=0.0d0) then
-  write(6,'(a)') 'test_data: must have fcfact>0.0 for icmod= 1, 3, or 5'
+ if((icmod==1 .or. icmod==3 .or. icmod==5 .or. icmod==6) .and. fcfact<=0.0d0) then
+  write(6,'(a)') 'test_data: must have fcfact>0.0 for icmod= 1, 3, 5, or 6'
   ierr=ierr+1
  end if
 
- if((icmod==3 .or. icmod==5) .and. rcfact<=0.0d0) then
-  write(6,'(a)') 'test_data: must have rcfact>0.0 for icmod= 3 or 5'
+ if((icmod==3 .or. icmod==5 .or. icmod==6) .and. rcfact<=0.0d0) then
+  write(6,'(a)') 'test_data: must have rcfact>0.0 for icmod= 3, 5, or 6'
   ierr=ierr+1
  end if
 
